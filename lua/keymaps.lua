@@ -31,14 +31,7 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
-
-vim.keymap.set('n', '<leader>x', ':Ex<Enter>', { desc = 'Run network dir listing (:Ex)' })
-
-
--- -- Telescope keybinds
--- local builtin = require('telescope.builtin')
--- vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
--- vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
--- vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
--- vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+-- Turn this off while we give oil.nvim a go
+--vim.keymap.set('n', '<leader>x', ':Ex<Enter>', { desc = 'Run network dir listing (:Ex)' })
+vim.keymap.set('n', '<leader>x', ':Oil<Enter>', { desc = 'Run network dir listing (:Ex)' })
 
