@@ -74,7 +74,29 @@ return {
 			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 			local servers = {
-				-- clangd = {},
+				clangd = {
+						-- If clangd is installed by Mason, typically it is `clangd` or
+						-- the full path to Mason's clangd binary:
+						-- e.g., "C:\\Users\\simon\\AppData\\Local\\nvim-data\\mason\\bin\\clangd.EXE"
+						-- but usually just "clangd" works if it's on PATH or found by Mason.
+						"clangd",
+						"--log=verbose",
+						-- Tells clangd to parse code as if it's using Microsoft’s cl.exe
+						"--driver-mode=cl",
+						-- Set the target triple to a 64-bit MSVC environment
+						"--target=x86_64-pc-windows-msvc",
+						-- Example 1: Force your code to be parsed as C++17, ignoring
+						-- any 'cc -std=c11' from the compile_commands.json
+						"--extra-arg-before=-xc++",
+						"--extra-arg-before=-std=c++17",
+
+						-- Example 2: (Alternatively) emulate MSVC's driver if you want / need it:
+						-- "--driver-mode=cl",
+						-- "--extra-arg-before=/std:c++17",
+
+						-- Point clangd to the directory that holds compile_commands.json
+						"--compile-commands-dir=C:/gd/Simon/Development/cpp/pecan"
+				},
 				-- gopls = {},
 				-- pyright = {},
 				-- rust_analyzer = {},

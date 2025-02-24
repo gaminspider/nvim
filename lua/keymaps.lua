@@ -33,5 +33,70 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 -- Turn this off while we give oil.nvim a go
 --vim.keymap.set('n', '<leader>x', ':Ex<Enter>', { desc = 'Run network dir listing (:Ex)' })
-vim.keymap.set('n', '<leader>x', ':Oil<Enter>', { desc = 'Run network dir listing (:Ex)' })
+
+local function oilFromConfigRoot()
+  local myvimrc = os.getenv("MYVIMRC")
+  assert(myvimrc, "MYVIMRC is not set in the environment!")
+  local config_dir = vim.fn.fnamemodify(myvimrc, ":h")
+  return function()
+    vim.cmd("Oil " .. config_dir)
+  end
+end
+
+vim.keymap.set('n', '<leader>x', ':Oil<enter>', { desc = 'run :Oil' })
+vim.keymap.set('n', '<leader>z', oilFromConfigRoot(), { desc = 'run :Oil from config directory' })
+
+-- Toggle diagnostics
+local diagnostics_active = true
+
+function toggle_diag()
+  diagnostics_active = not diagnostics_active
+  if diagnostics_active then
+    vim.diagnostic.enable()
+    print("Diagnostics enabled")
+  else
+    vim.diagnostic.disable()
+    print("Diagnostics disabled")
+  end
+end
+
+vim.keymap.set('n', '<leader>td', toggle_diag, { desc = 'Toggle diagnostics' })
+
+
+local warnings_hidden = false
+
+-- Toggle diagnostic warnings
+function toggle_warnings()
+  warnings_hidden = not warnings_hidden
+  if warnings_hidden then
+    -- Hide warnings by setting their severity to nil
+    vim.diagnostic.config({
+      severity_sort = true,
+      virtual_text = {
+        severity = { min = vim.diagnostic.severity.ERROR },
+      },
+      signs = {
+        severity = { min = vim.diagnostic.severity.ERROR },
+      },
+      underline = {
+        severity = { min = vim.diagnostic.severity.ERROR },
+      },
+      float = {
+        severity = { min = vim.diagnostic.severity.ERROR },
+      },
+    })
+    print("Warnings hidden")
+  else
+    -- Show all diagnostics
+    vim.diagnostic.config({
+      virtual_text = true,
+      signs = true,
+      underline = true,
+      float = true,
+    })
+    print("Warnings shown")
+  end
+end
+
+vim.keymap.set('n', '<leader>tw', toggle_warnings, { desc = 'Toggle warnings' })
 
