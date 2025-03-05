@@ -104,3 +104,106 @@ vim.keymap.set('n', '<leader>tw', toggle_warnings, { desc = 'Toggle warnings' })
 --vim.keymap.set('n', '<leader>cd', require('telescope').extensions.zoxide.list, { desc = 'zoxide list' })
 
 
+-- Function to toggle ticked state: - [ ] <-> - [x]
+local function toggle_ticked()
+    local mode = vim.api.nvim_get_mode().mode
+
+    if mode == "n" then  -- Normal mode
+        local line = vim.api.nvim_get_current_line()
+        if line:match("%- %[%s%]") then
+            line = line:gsub("%- %[%s%]", "- [x]", 1)
+        elseif line:match("%- %[x%]") then
+            line = line:gsub("%- %[x%]", "- [ ]", 1)
+        end
+        vim.api.nvim_set_current_line(line)
+
+    elseif mode == "v" or mode == "V" then  -- Visual mode (line or character)
+        local start_line = vim.fn.line("v")
+        local end_line = vim.fn.line(".")
+        if start_line > end_line then start_line, end_line = end_line, start_line end
+        for i = start_line, end_line do
+            local line = vim.fn.getline(i)
+            if line:match("%- %[%s%]") then
+                line = line:gsub("%- %[%s%]", "- [x]", 1)
+            elseif line:match("%- %[x%]") then
+                line = line:gsub("%- %[x%]", "- [ ]", 1)
+            end
+            vim.fn.setline(i, line)
+        end
+    end
+end
+
+-- Function to toggle checkbox: "Task" <-> "- [ ] Task" <-> "Task"
+local function toggle_checkbox()
+    local mode = vim.api.nvim_get_mode().mode
+
+    if mode == "n" then  -- Normal mode
+        local line = vim.api.nvim_get_current_line()
+        if line:match("^%- %[%s%] ") then
+            line = line:gsub("^%- %[%s%] ", "", 1)
+        elseif line:match("^%- ") and not line:match("^%- %[[x ]%]") then
+            line = line:gsub("^%- ", "- [ ] ", 1)
+        elseif not line:match("^%- %[[x ]%]") then
+            line = "- [ ] " .. line
+        end
+        vim.api.nvim_set_current_line(line)
+
+    elseif mode == "v" or mode == "V" then  -- Visual mode (line or character)
+        local start_line = vim.fn.line("v")
+        local end_line = vim.fn.line(".")
+        if start_line > end_line then start_line, end_line = end_line, start_line end
+        for i = start_line, end_line do
+            local line = vim.fn.getline(i)
+            if line:match("^%- %[%s%] ") then
+                line = line:gsub("^%- %[%s%] ", "", 1)
+            elseif line:match("^%- ") and not line:match("^%- %[[x ]%]") then
+                line = line:gsub("^%- ", "- [ ] ", 1)
+            elseif not line:match("^%- %[[x ]%]") then
+                line = "- [ ] " .. line
+            end
+            vim.fn.setline(i, line)
+        end
+    end
+end
+
+-- Function to toggle bullet: "Task" <-> "- Task" and "- [ ] Task" <-> "- Task"
+local function toggle_bullet()
+    local mode = vim.api.nvim_get_mode().mode
+
+    if mode == "n" then  -- Normal mode
+        local line = vim.api.nvim_get_current_line()
+        if line:match("^%- %[%s?x?%] ") then
+            line = line:gsub("^%- %[%s?x?%] ", "- ", 1)
+        elseif line:match("^%- ") then
+            line = line:gsub("^%- ", "", 1)
+        else
+            line = "- " .. line
+        end
+        vim.api.nvim_set_current_line(line)
+
+    elseif mode == "v" or mode == "V" then  -- Visual mode (line or character)
+        local start_line = vim.fn.line("v")
+        local end_line = vim.fn.line(".")
+        if start_line > end_line then start_line, end_line = end_line, start_line end
+        for i = start_line, end_line do
+            local line = vim.fn.getline(i)
+            if line:match("^%- %[%s?x?%] ") then
+                line = line:gsub("^%- %[%s?x?%] ", "- ", 1)
+            elseif line:match("^%- ") then
+                line = line:gsub("^%- ", "", 1)
+            else
+                line = "- " .. line
+            end
+            vim.fn.setline(i, line)
+        end
+    end
+end
+
+-- Keymaps
+vim.keymap.set({"n", "v"}, "<leader>tt", toggle_ticked, { noremap = true, silent = true, desc = "Toggle ticked" })
+vim.keymap.set({"n", "v"}, "<leader>tc", toggle_checkbox, { noremap = true, silent = true, desc = "Toggle checkbox" })
+vim.keymap.set({"n", "v"}, "<leader>tb", toggle_bullet, { noremap = true, silent = true, desc = "Toggle bullet" })
+
+vim.keymap.set("n", "<leader>rc", ":source $MYVIMRC<CR>", { noremap = true, silent = true, desc = "Reload Vim config" })
+
+
