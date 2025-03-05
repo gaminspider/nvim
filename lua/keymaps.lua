@@ -100,3 +100,7 @@ end
 
 vim.keymap.set('n', '<leader>tw', toggle_warnings, { desc = 'Toggle warnings' })
 
+-- This is defined in the zoxide config
+--vim.keymap.set('n', '<leader>cd', require('telescope').extensions.zoxide.list, { desc = 'zoxide list' })
+
+

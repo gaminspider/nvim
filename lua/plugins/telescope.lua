@@ -12,14 +12,41 @@ return {
   {
     'nvim-telescope/telescope.nvim',
     tag = '0.1.8',
-    dependencies = { 'nvim-lua/plenary.nvim' },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'jvgrootveld/telescope-zoxide'
+    },
     config = function()
+      local z_utils = require("telescope._extensions.zoxide.utils")
+
       require("telescope").setup({
-        
+        extensions = {
+          zoxide = {
+            prompt_title = "[ Walking on the shoulders of TJ ]",
+            mappings = {
+              default = {
+                after_action = function(selection)
+                  print("Update to (" .. selection.z_score .. ") " .. selection.path)
+                end
+              },
+              ["<C-s>"] = {
+                before_action = function(_) print("before C-s") end,
+                action = function(selection)
+                  vim.cmd.edit(selection.path)
+                end
+              },
+              -- Opens the selected entry in a new split
+              ["<C-q>"] = { action = z_utils.create_basic_command("split") },
+            },
+          }
+        }
       })
 
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'zoxide')
+
+      vim.keymap.set('n', '<leader>cd', function() require('telescope').extensions.zoxide.list() end, { desc = 'zoxide list' })
 
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
