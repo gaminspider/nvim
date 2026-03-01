@@ -60,7 +60,7 @@ return {
 					)
 					map("<leader>rn", vim.lsp.buf.rename, "[r]e[n]ame")
 					map("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction")
-					map("gd", vim.lsp.buf.declaration, "[g]oto [d]eclaration")
+					-- map("gd", vim.lsp.buf.declaration, "[g]oto [d]eclaration")
 
 					if client and client.supports_method(vim.lsp.protocol.methods.textdocument_inlayhint) then
 						map("<leader>th", function()
@@ -75,27 +75,15 @@ return {
 
 			local servers = {
 				clangd = {
-						-- If clangd is installed by Mason, typically it is `clangd` or
-						-- the full path to Mason's clangd binary:
-						-- e.g., "C:\\Users\\simon\\AppData\\Local\\nvim-data\\mason\\bin\\clangd.EXE"
-						-- but usually just "clangd" works if it's on PATH or found by Mason.
+					cmd = {
 						"clangd",
 						"--log=verbose",
-						-- Tells clangd to parse code as if it's using Microsoft’s cl.exe
 						"--driver-mode=cl",
-						-- Set the target triple to a 64-bit MSVC environment
 						"--target=x86_64-pc-windows-msvc",
-						-- Example 1: Force your code to be parsed as C++17, ignoring
-						-- any 'cc -std=c11' from the compile_commands.json
 						"--extra-arg-before=-xc++",
 						"--extra-arg-before=-std=c++17",
-
-						-- Example 2: (Alternatively) emulate MSVC's driver if you want / need it:
-						-- "--driver-mode=cl",
-						-- "--extra-arg-before=/std:c++17",
-
-						-- Point clangd to the directory that holds compile_commands.json
-						"--compile-commands-dir=C:/gd/Simon/Development/cpp/pecan"
+						"--compile-commands-dir=C:/gd/Simon/Development/cpp/pecan",
+					},					
 				},
 				-- gopls = {},
 				-- pyright = {},
@@ -143,17 +131,16 @@ return {
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 			require("mason-lspconfig").setup({
-				handlers = {
-					function(server_name)
-						local server = servers[server_name] or {}
-						-- this handles overriding only values explicitly passed
-						-- by the server configuration above. useful when disabling
-						-- certain features of an lsp (for example, turning off formatting for tsserver)
-						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-						require("lspconfig")[server_name].setup(server)
-					end,
-				},
-			})
+			automatic_enable = false, -- <- stop calling vim.lsp.enable() on startup
+			handlers = {
+				function(server_name)
+					local server = servers[server_name] or {}
+					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+					require("lspconfig")[server_name].setup(server)
+				end,
+			},
+		})
+			
 		end,
 	},
 
