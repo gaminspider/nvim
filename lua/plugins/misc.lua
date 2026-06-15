@@ -127,31 +127,51 @@ return {
 
   {
     -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    build = ':TSUpdate',
+    "nvim-treesitter/nvim-treesitter",
+    branch = "main",
+    build = ":TSUpdate",
+    main = "nvim-treesitter",
+
     opts = {
       ensure_installed = {
-        'bash', 'c', 'diff', 'html', 'lua', 'luadoc',
-        'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'python'
+        "bash",
+        "c",
+        "diff",
+        "html",
+        "lua",
+        "luadoc",
+        "markdown",
+        "markdown_inline",
+        "query",
+        "vim",
+        "vimdoc",
+        "python",
       },
+
       auto_install = true,
+
       highlight = {
         enable = true,
-        additional_vim_regex_highlighting = { 'ruby' },
+        additional_vim_regex_highlighting = { "ruby" },
       },
-      indent = { enable = true, disable = { 'ruby' } },
+
+      indent = {
+        enable = true,
+        disable = { "ruby" },
+      },
+
       incremental_selection = {
         enable = true,
         keymaps = {
-          init_selection = "<leader>is",    -- initial selection
-          node_incremental = "<leader>gs",  -- grow selection
-          node_decremental = "<leader>rs",  -- reduce selection
+          init_selection = "<leader>is",
+          node_incremental = "<leader>gs",
+          node_decremental = "<leader>rs",
         },
       },
     },
+
     config = function(_, opts)
-      ---@diagnostic disable-next-line: missing-fields
-      require('nvim-treesitter.configs').setup(opts)
+      require("nvim-treesitter").setup(opts)
     end,
   },
 

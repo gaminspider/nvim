@@ -206,4 +206,9 @@ vim.keymap.set({"n", "v"}, "<leader>tb", toggle_bullet, { noremap = true, silent
 
 vim.keymap.set("n", "<leader>rc", ":source $MYVIMRC<CR>", { noremap = true, silent = true, desc = "Reload Vim config" })
 
+vim.keymap.set("c", "<F5>", function()
+    return os.date("%Y-%m-%d")
+end, { expr = true })
+
+
 

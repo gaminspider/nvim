@@ -1,6 +1,6 @@
 require("options")
 require("keymaps")
-require("autocmds")
+require("commands")
 require("config.lazy")
 print("Congig loaded")
 
